@@ -1,4 +1,4 @@
-﻿#the Visio module is required
+#the Visio module is required
 if (Get-Module -ListAvailable -Name Visio) {
     Write-Host "Visio module installed - script will proceed."
 } else {
@@ -50,7 +50,7 @@ function Get-NetStat{
     Write-Host "Getting netstat information for established connections."
     $cmd = (netstat -ano | Select-String "Established")
     foreach ($line in $cmd){
-        Write-Progress -Activity "Working..." -PercentComplete ((($cmd.IndexOf($line) + 1) / $cmd.Count) * 100)
+        Write-Progress -Activity "Working..." -PercentComplete ((($cmd.IndexOf($line)) / $cmd.Count) * 100)
         $cmdline = $line.Line.ToString()
         $elements=$cmdline.Split(" ", [System.StringSplitOptions]::RemoveEmptyEntries)
         $object = New-Object -TypeName PSObject
@@ -82,18 +82,12 @@ function Get-NetStat{
                 $object | Add-Member -Name 'RegionName' -MemberType NoteProperty -Value $geoIpInfo.RegionName
                 $object | Add-Member -Name 'City' -MemberType NoteProperty -Value $geoIpInfo.City
             }      
-                else{
-                    $object | Add-Member -Name 'DestLat' -MemberType NoteProperty -Value 'N/A'
-                    $object | Add-Member -Name 'DestLong' -MemberType NoteProperty -Value 'N/A'
-                    $object | Add-Member -Name 'CountryName' -MemberType NoteProperty -Value 'N/A'
-                    $object | Add-Member -Name 'RegionName' -MemberType NoteProperty -Value 'N/A'
-                    $object | Add-Member -Name 'City' -MemberType NoteProperty -Value 'N/A'
-                }
-        }
         [array]$Global:netstat += $object
-     }
+        }
 }
-
+    Write-Progress -Activity "Working..." -PercentComplete 100 -Completed
+}
+    
 Get-NetStat
 
 Write-Host "Building node list."
